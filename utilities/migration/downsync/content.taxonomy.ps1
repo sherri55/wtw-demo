@@ -27,12 +27,11 @@ foreach ($item in $taxonomyItems) {
 $allDynamicFields = $allDynamicFields.ToArray() | Sort-Object
 
 # 4. Get languages
-$database = Get-Database "master"
-$languages = [Sitecore.Globalization.Language]::GetLanguages($database)
+$availableLanguages = [Sitecore.Data.Managers.LanguageManager]::GetLanguages([Sitecore.Context]::ContentDatabase)
 
 # 5. Build export data
 $data = foreach ($item in $taxonomyItems) {
-    foreach ($lang in $languages) {
+    foreach ($lang in $availableLanguages) {
         $itemLang = Get-Item -Path $item.ID -Language $lang.Name -Version Latest -ErrorAction SilentlyContinue
         if ($itemLang -and $itemLang.Versions.Count -gt 0) {
             $rec = New-Object PSObject
